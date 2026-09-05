@@ -31,7 +31,6 @@ export default function Player() {
   const locked = useRef(false);
   const mode = useRef<'idle' | 'walk' | null>(null);
 
-  const dummyFwd = useMemo(() => new THREE.Vector3(), []);
   const dummyBehind = useMemo(() => new THREE.Vector3(), []);
 
   useEffect(() => {
@@ -48,7 +47,7 @@ export default function Player() {
     const onMove = (e: MouseEvent) => {
       if (!locked.current) return;
       yaw.current -= e.movementX * MOUSE_SENS;
-      pitch.current = THREE.MathUtils.clamp(pitch.current - e.movementY * MOUSE_SENS, PITCH_MIN, PITCH_MAX);
+      pitch.current = THREE.MathUtils.clamp(pitch.current + e.movementY * MOUSE_SENS, PITCH_MIN, PITCH_MAX);
     };
 
     document.addEventListener('pointerlockchange', onLockChange);
@@ -67,13 +66,17 @@ export default function Player() {
 
     const { walkAction, idleAction, mixer } = character;
 
-    // direction vectors from yaw
-    dummyFwd.set(Math.sin(yaw.current), 0, Math.cos(yaw.current));
-    const rightX = Math.cos(yaw.current);
-    const rightZ = -Math.sin(yaw.current);
+    // Camera-relative movement frame:
+    //   W = straight away from the camera (into the screen)
+    //   S = toward the camera, A/D = perpendicular on screen (incl. diagonals).
+    // right = cross(forward, up) projected on the horizontal plane.
+    const fx = Math.sin(yaw.current);
+    const fz = Math.cos(yaw.current);
+    const rx = -fz;
+    const rz = fx;
 
-    const dx = dummyFwd.x * input.z + rightX * input.x;
-    const dz = dummyFwd.z * input.z + rightZ * input.x;
+    const dx = fx * input.z + rx * input.x;
+    const dz = fz * input.z + rz * input.x;
     const speed = Math.hypot(dx, dz);
     const moving = speed > 0.001;
 
@@ -115,7 +118,7 @@ export default function Player() {
   });
 
   return (
-    <group ref={group} position={[0, 0, 14]}>
+    <group ref={group} position={[0, 0, 14]} rotation={[0, -Math.PI / 2, 0]}>
       <primitive object={character.object} />
     </group>
   );
