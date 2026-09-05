@@ -1,3 +1,6 @@
+# Proposal
+proposal.pdf
+
 # Logs
 logs
 *.log
@@ -141,3 +144,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Raw Sketchfab downloads (optimized copies live in apps/web/public/models/cars)
+cars/
