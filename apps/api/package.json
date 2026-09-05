@@ -7,6 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "node scripts/build.mjs",
     "start": "node dist/server.js",
+    "ws-test": "tsx scripts/ws-test.mts",
     "typecheck": "tsc -p tsconfig.json",
     "clean": "rm -rf dist"
   },
