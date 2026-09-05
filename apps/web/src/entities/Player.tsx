@@ -3,6 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useKeyboardMovement } from './PlayerController';
 import { useCharacter } from './useCharacter';
+import { playerPosition } from '../lib/playerState';
 
 const SPEED = 5.0;
 const CAM_DIST = 9;
@@ -102,6 +103,7 @@ export default function Player() {
     mixer.update(dt);
 
     group.current?.position.copy(pos.current);
+    playerPosition.copy(pos.current);
 
     // smoothed camera behind/above the player
     dummyBehind

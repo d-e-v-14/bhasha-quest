@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import CityScene from './scenes/CityScene';
+import DialoguePanel from './components/DialoguePanel';
+import QuestChip from './components/QuestChip';
 
 export default function App() {
   return (
@@ -14,6 +16,8 @@ export default function App() {
         <span className="keys">WASD</span> move &nbsp;·&nbsp; <span className="keys">&nbsp;Mouse&nbsp;</span> look
         &nbsp;·&nbsp; click to capture pointer
       </div>
+      <QuestChip />
+      <DialoguePanel />
     </>
   );
 }

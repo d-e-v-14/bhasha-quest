@@ -1,9 +1,15 @@
 import Road from '../entities/Road';
+import CrossRoad from '../entities/CrossRoad';
 import HawaMahal from '../entities/HawaMahal';
 import Shopfront from '../entities/Shopfront';
 import Streetlight from '../entities/Streetlight';
 import AutoManager from '../entities/AutoManager';
+import TrafficCars from '../entities/TrafficCars';
 import { CHHATRIS, PALETTE, SHOPFRONTS } from '../entities/cityData';
+import { INTERACTABLES } from '../data/interactables';
+import InteractionPrompt from '../components/InteractionPrompt';
+import InteractionTracker from '../components/InteractionTracker';
+import QuestAnchors from '../entities/QuestAnchors';
 
 /**
  * Composition root for one Jaipur street block: the road, the Hawa Mahal
@@ -14,6 +20,7 @@ export default function CityBlock() {
   return (
     <group>
       <Road />
+      <CrossRoad />
 
       <HawaMahal />
 
@@ -42,6 +49,17 @@ export default function CityBlock() {
       ))}
 
       <AutoManager />
+      <TrafficCars />
+
+      <QuestAnchors />
+
+      {/* proximity scan + floating interaction prompts */}
+      <InteractionTracker />
+      {INTERACTABLES.map((it) => (
+        <group key={it.id} position={[it.x, 0, it.z]}>
+          <InteractionPrompt interactable={it} />
+        </group>
+      ))}
     </group>
   );
 }

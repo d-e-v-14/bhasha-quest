@@ -26,6 +26,20 @@ export const ROAD = {
   centerX: 0,
 } as const;
 
+// Cross road (E-W) intersecting the main road at z = -36.
+// zCenter - width/2 .. zCenter + width/2 = z -41..-31 is the intersection zone.
+export const CROSS_ROAD = {
+  width: 10, // z from -41..-31
+  length: 160, // x from -80..80
+  sidewalkWidth: 3,
+  zCenter: -36,
+} as const;
+
+export const INTERSECTION = {
+  zStart: CROSS_ROAD.zCenter - CROSS_ROAD.width / 2, // -41
+  zEnd: CROSS_ROAD.zCenter + CROSS_ROAD.width / 2, // -31
+} as const;
+
 export const HAWA = {
   // West facade, front face at x = -14, facing +x toward the road.
   frontX: -14,
@@ -73,6 +87,11 @@ export const STREETLIGHTS: StreetlightSpec[] = [
   { x: 7.5, z: -22, rotationY: Math.PI },
   { x: 7.5, z: 0, rotationY: Math.PI },
   { x: 7.5, z: 22, rotationY: Math.PI },
+  // cross road lamps: arm rotated to point at the road (north side faces +z, south side faces -z)
+  { x: -22, z: -43.5, rotationY: -Math.PI / 2 },
+  { x: 22, z: -43.5, rotationY: -Math.PI / 2 },
+  { x: -22, z: -29.5, rotationY: Math.PI / 2 },
+  { x: 22, z: -29.5, rotationY: Math.PI / 2 },
 ];
 
 // Background chhatri (small domed pavilion) silhouettes behind Hawa Mahal.
