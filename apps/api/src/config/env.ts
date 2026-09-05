@@ -1,4 +1,11 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const apiDir = path.resolve(here, "..", "..");
+const rootDir = path.resolve(here, "..", "..", "..", "..");
+dotenv.config({ path: [path.join(apiDir, ".env"), path.join(rootDir, ".env")] });
 
 function required(name: string): string {
   const value = process.env[name];
@@ -23,7 +30,7 @@ export const env = {
   port: optionalInt("PORT", 3001),
   sttRealtimeModel: optional("SARVAM_STT_REALTIME_MODEL", "saaras:v4-realtime"),
   sttRestModel: optional("SARVAM_STT_REST_MODEL", "saaras:v4"),
-  chatModel: optional("SARVAM_CHAT_MODEL", "sarvam-30b"),
+  chatModel: optional("SARVAM_CHAT_MODEL", "sarvam-105b"),
   targetLanguage: optional("STT_TARGET_LANGUAGE", "ta-IN"),
   streamType: optional("STT_STREAM_TYPE", "fast"),
   endpointing: optional("STT_ENDPOINTING", "vad"),

@@ -13,7 +13,6 @@
     "noUncheckedIndexedAccess": true,
     "noFallthroughCasesInSwitch": true,
     "noEmit": true,
-    "baseUrl": ".",
     "paths": {
       "@learn-live/types": ["../../packages/types/src/index.ts"]
     }

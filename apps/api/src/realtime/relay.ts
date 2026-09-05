@@ -1,17 +1,19 @@
 import type { IncomingMessage } from "node:http";
 import { WebSocketServer, WebSocket } from "ws";
-import type { RelayEvent, TurnScore } from "@learn-live/types";
+import type { ExpectedSlot, RelayEvent, TurnScore } from "@learn-live/types";
 import { env } from "../config/env.js";
 import { logger } from "../utils/logger.js";
 import { RealtimeSttClient } from "../sarvam/realtimeSttClient.js";
 import { scoreTranscript } from "../scoring/wordScorer.js";
-import { judgeIntent } from "../scoring/intentScorer.js";
 import { computeTurnScore } from "../scoring/roundWeighting.js";
+import { runEvaluation } from "../evaluation/graph.js";
 
 interface OpenQuery {
   language: string;
   targetPhrase: string;
   round: "guided" | "recall";
+  expectedSlots: ExpectedSlot[];
+  threshold?: number;
 }
 
 const CLOSE_CODE_1003 = 1003;
@@ -24,10 +26,22 @@ const PING_INTERVAL_MS = 20_000;
 function parseOpenQuery(req: IncomingMessage): OpenQuery {
   const url = new URL(req.url ?? "/", "http://localhost");
   const round = url.searchParams.get("round") === "recall" ? "recall" : "guided";
+  let expectedSlots: ExpectedSlot[] = [];
+  const slotsRaw = url.searchParams.get("slots");
+  if (slotsRaw) {
+    try {
+      const parsed = JSON.parse(slotsRaw) as ExpectedSlot[];
+      if (Array.isArray(parsed)) expectedSlots = parsed;
+    } catch {
+      logger.warn("Ignoring malformed 'slots' query param", { slotsRaw });
+    }
+  }
   return {
     language: url.searchParams.get("language") ?? env.targetLanguage,
     targetPhrase: url.searchParams.get("targetPhrase") ?? "",
     round,
+    expectedSlots,
+    threshold: Number(url.searchParams.get("threshold") ?? 0) || undefined,
   };
 }
 
@@ -133,21 +147,32 @@ export function attachRealtimeRelay(wss: WebSocketServer): void {
               score,
             });
 
-            void judgeIntent({
-              apiKey: env.sarvaApiKey,
-              model: env.chatModel,
+            void runEvaluation({
               transcript,
               targetPhrase: query.targetPhrase,
               languageCode: query.language,
               round: query.round,
+              expectedSlots: query.expectedSlots,
+              sttLanguageCode: query.language,
+              apiKey: env.sarvaApiKey,
+              chatModel: env.chatModel,
+              threshold: query.threshold,
             })
-              .then((verdict) => {
-                const turn: TurnScore = computeTurnScore(score, verdict, query.language, query.round);
-                send({ event: "intent_verdict", verdict: turn });
+              .then((evaluation) => {
+                send({ event: "evaluation", evaluation });
+                if (evaluation.intent) {
+                  const turn: TurnScore = computeTurnScore(
+                    score,
+                    evaluation.intent,
+                    query.language,
+                    query.round,
+                  );
+                  send({ event: "intent_verdict", verdict: turn });
+                }
               })
               .catch((err: unknown) => {
-                logger.error("Intent scoring failed", err);
-                send({ event: "error", code: "intent_score_failed", message: String(err) });
+                logger.error("Evaluation pipeline failed", err);
+                send({ event: "error", code: "evaluation_failed", message: String(err) });
               });
           }
           break;
