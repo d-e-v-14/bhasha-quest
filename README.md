@@ -24,6 +24,42 @@ There is no dialogue menu. You speak into your microphone, the game listens, sco
 
 This turns language learning into **rehearsal for real life**, not memorization. You are not learning abstract grammar rules. You are standing in a virtual auto stand, needing to say a real thing to a real-sounding person, and being tested on it again later without a safety net.
 
+## Profile-Driven NPCs (Personalized NPC Engine)
+
+Every player has a configurable learning profile that the game carries across sessions:
+
+- Target regional language
+- Native / preferred language
+- Current proficiency level
+- Speaking and listening ability
+- Areas of weakness
+- Previously learned phrases
+- Performance history
+- Conversation confidence
+- Progress through levels
+
+NPC interactions are **dynamically adapted** from this profile. NPCs do not behave identically for every player. Their behavior, difficulty, vocabulary, speaking speed, patience, personality, use of code-switching, and follow-up questions are adjusted to the player's current abilities and previous performance.
+
+A concrete example: a beginner who struggles with numbers encounters an NPC in a shop or at an auto stand who initially speaks more slowly and uses simpler language. As the player improves, NPCs become less predictable, speak more naturally, introduce follow-up questions, use more realistic code-mixed speech, and provide fewer hints.
+
+The whole system is a continuous feedback loop:
+
+```
+Player Profile
+  -> NPC / Scenario Personalization
+  -> Voice Interaction
+  -> AI Evaluation
+  -> Performance Update
+  -> Updated Player Profile
+  -> More Adaptive NPCs and Quests
+```
+
+The profile is not static, it evolves on every turn. If a player repeatedly struggles with a specific skill, such as prices, directions, listening comprehension, or clarification, future quests and NPC interactions deliberately exercise that weakness. If the player performs consistently well, the system raises the difficulty.
+
+NPC personality is a separate personalization layer. NPCs come with distinct roles and temperaments, such as a friendly shopkeeper, an impatient auto driver, a helpful metro employee, or a conversational local. Their speech speed, vocabulary complexity, patience, and code-switching level vary with the role and with the player.
+
+This is one of the project's key innovations. Conventional language apps and static game NPCs treat every learner the same. Here the game does not simply place the learner inside a 3D world; the world itself adapts to the learner.
+
 ## How it plays
 
 Every level is two rounds:
