@@ -16,6 +16,15 @@ interface SarvamSttResponse {
   error?: { message?: string };
 }
 
+function isNetworkError(err: unknown): boolean {
+  return err instanceof TypeError && /fetch failed/.test(err.message);
+}
+
+function causeDetail(err: unknown): string {
+  const cause = (err as { cause?: { code?: string; message?: string } }).cause;
+  return cause?.code ? `${cause.code}: ${cause.message ?? ""}`.trim() : String(err);
+}
+
 export async function transcribeViaRest(opts: RestSttOptions): Promise<NormalizedSttResult> {
   const form = new FormData();
   const blob = new Blob([new Uint8Array(opts.audio)], { type: "audio/wav" });
@@ -23,11 +32,25 @@ export async function transcribeViaRest(opts: RestSttOptions): Promise<Normalize
   form.append("model", opts.model);
   form.append("language_code", opts.languageCode);
 
-  const res = await fetch(`${STS_BASE}/speech-to-text`, {
-    method: "POST",
-    headers: { "api-subscription-key": opts.apiKey },
-    body: form,
-  });
+  const attempt = async (): Promise<Response> =>
+    fetch(`${STS_BASE}/speech-to-text`, {
+      method: "POST",
+      headers: { "api-subscription-key": opts.apiKey },
+      body: form,
+    });
+
+  let res: Response;
+  try {
+    res = await attempt();
+  } catch (err) {
+    if (!isNetworkError(err)) throw err;
+    await new Promise((r) => setTimeout(r, 500));
+    try {
+      res = await attempt();
+    } catch (err2) {
+      throw new Error(`Sarvam REST STT unreachable (${causeDetail(err2)})`);
+    }
+  }
 
   const json = (await res.json().catch(() => ({}))) as SarvamSttResponse;
   if (!res.ok) {
