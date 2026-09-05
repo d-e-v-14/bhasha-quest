@@ -1,87 +1,159 @@
 # Learn Live
 
-**Learn regional languages by living them.**
+**Not a game that teaches language. A personalized world that teaches you how to communicate.**
 
-A browser-based 3D city-exploration game where you learn to *speak* an Indian regional language, not by memorizing flashcards, but by walking up to NPCs and talking to them out loud, powered by [Sarvam AI](https://sarvam.ai).
+Learn Live is a **personalized simulation of real-world communication**, not an AI language-learning game. It drops a browser into a low-poly Indian city where everyday situations actually happen, and every interaction in it is generated around one learner: you.
+
+Powered by [Sarvam AI](https://sarvam.ai) for Indian-language speech, transcription, and evaluation.
 
 ---
 
 ## The problem
 
-India has 22+ officially recognized languages, and most language-learning apps teach vocabulary and grammar in the abstract: flashcards, multiple choice, disconnected sentences. They rarely teach the thing people actually need, which is the confidence to speak out loud, in a real situation, and be understood.
+Most language-learning tools teach you to recall words and reproduce sentences. They test whether you can match a flashcard, pick the right option, or greet out loud. None of that prepares you for the moment the situation actually changes: the auto driver quotes a different price, the shopkeeper misunderstands you, or someone speaks faster than you expected.
 
-Anyone who has moved to a new Indian city knows the gap directly. You might be able to read a language a little, but you freeze the moment you have to say something to an auto driver, a shopkeeper, or a ticket counter clerk.
+That is where learners freeze. Reading a language a little does not help when you need to negotiate a fare in real time, ask for clarification, or rephrase under pressure.
 
-Generic speech technology makes this worse. Global speech APIs are tuned for English and other high-resource languages, and they consistently fail on Indic phonetics, accented speech, and code-mixed conversation. A learner who trips over "enga poene?" to an auto driver gets zero useful feedback from software that cannot even hear them correctly.
+Generic speech technology makes this worse. Global speech APIs are tuned for high-resource languages and consistently fail on Indic phonetics, accented speech, and the code-mixed speech that is normal in Indian cities. A learner who trips over a phrase to a Chennai auto driver gets no useful feedback from software that cannot hear them correctly.
 
-So the problem is twofold: existing tools do not create real speaking practice, and the ones that try to transcribe Indian languages often cannot do so reliably. Speak is the gap, and Indic-specific AI is the missing foundation.
+So the problem is twofold: existing tools practice the wrong skill (recall, not communication), and the ones that try often cannot even understand Indian-language speech reliably.
 
-## The idea
+## The product
 
-Learn Live drops you into a low-poly recreation of an Indian city, starting with Chennai, where you complete everyday real-life tasks: booking an auto, ordering at a tiffin stall, buying a metro ticket. You complete each task entirely by **speaking the regional language out loud** to NPCs.
+Every learner gets a different world, because every learner has a different communication profile.
 
-There is no dialogue menu. You speak into your microphone, the game listens, scores your attempt, and responds, using Sarvam AI's speech and language models to understand natural, accented, real Indian-language speech.
+Learn Live is a **personalized conversational simulation engine**. The system maintains a persistent **Player Communication Profile** containing:
 
-This turns language learning into **rehearsal for real life**, not memorization. You are not learning abstract grammar rules. You are standing in a virtual auto stand, needing to say a real thing to a real-sounding person, and being tested on it again later without a safety net.
-
-## Profile-Driven NPCs (Personalized NPC Engine)
-
-Every player has a configurable learning profile that the game carries across sessions:
-
-- Target regional language
+- Target language
 - Native / preferred language
-- Current proficiency level
-- Speaking and listening ability
-- Areas of weakness
-- Previously learned phrases
-- Performance history
-- Conversation confidence
-- Progress through levels
+- Proficiency level
+- Speaking ability
+- Listening ability
+- Vocabulary knowledge
+- Recurring mistakes
+- Weak conversational skills
+- Confidence
+- Previously mastered situations
+- Previously failed situations
+- Preferred difficulty
 
-NPC interactions are **dynamically adapted** from this profile. NPCs do not behave identically for every player. Their behavior, difficulty, vocabulary, speaking speed, patience, personality, use of code-switching, and follow-up questions are adjusted to the player's current abilities and previous performance.
+NPCs are not static characters with predefined dialogue trees. They are **adaptive conversational agents** whose behavior is generated and configured according to the player's evolving profile. The 3D environment is the interface that makes these simulations immersive and memorable. The simulation itself, how it adapts to a specific learner, is the product.
 
-A concrete example: a beginner who struggles with numbers encounters an NPC in a shop or at an auto stand who initially speaks more slowly and uses simpler language. As the player improves, NPCs become less predictable, speak more naturally, introduce follow-up questions, use more realistic code-mixed speech, and provide fewer hints.
+## The core loop
 
-The whole system is a continuous feedback loop:
+Every interaction runs a continuous, closed loop:
 
 ```
-Player Profile
-  -> NPC / Scenario Personalization
-  -> Voice Interaction
-  -> AI Evaluation
-  -> Performance Update
-  -> Updated Player Profile
-  -> More Adaptive NPCs and Quests
+PLAYER PROFILE
+  -> PERSONALIZED SCENARIO
+  -> ADAPTIVE NPC
+  -> NATURAL VOICE CONVERSATION
+  -> AI EVALUATION
+  -> SKILL/WEAKNESS UPDATE
+  -> UPDATED PLAYER PROFILE
+  -> NEXT INTERACTION ADAPTS
 ```
 
-The profile is not static, it evolves on every turn. If a player repeatedly struggles with a specific skill, such as prices, directions, listening comprehension, or clarification, future quests and NPC interactions deliberately exercise that weakness. If the player performs consistently well, the system raises the difficulty.
+You speak out loud into your microphone, with no dialogue menu. Sarvam AI hears you, the system evaluates the exchange, updates your profile, and the next scenario is built from that updated profile.
 
-NPC personality is a separate personalization layer. NPCs come with distinct roles and temperaments, such as a friendly shopkeeper, an impatient auto driver, a helpful metro employee, or a conversational local. Their speech speed, vocabulary complexity, patience, and code-switching level vary with the role and with the player.
+## Adaptive NPCs
 
-This is one of the project's key innovations. Conventional language apps and static game NPCs treat every learner the same. Here the game does not simply place the learner inside a 3D world; the world itself adapts to the learner.
+Each NPC is an adaptive conversational agent with its own:
 
-## How it plays
+- Personality
+- Occupation
+- Communication style
+- Patience
+- Speech speed
+- Vocabulary complexity
+- Regional language characteristics
+- Code-switching behavior
+- Willingness to repeat or rephrase
+- Difficulty level
 
-Every level is two rounds:
+The NPC decides how to communicate based on **both** its own personality **and** the learner's current communication profile.
 
-| Round | What's shown | What it tests |
-|---|---|---|
-| **1. Guided** | Full script, transliteration, translation, target phrase | Reading + speaking the phrase |
-| **2. Recall** | Nothing. NPC speaks only via audio, no captions | Listening comprehension + unaided recall |
+- A learner who struggles with listening initially meets a patient shopkeeper who speaks clearly and allows clarification.
+- A learner who has mastered basic conversations meets a faster, less predictable shopkeeper who changes the request, asks follow-up questions, or uses natural code-mixed speech.
+- A learner who repeatedly struggles with prices encounters future situations that naturally require handling prices, negotiation, numbers, or clarification.
 
-Round 2 varies the scenario slightly, with a different item, a different price, or a follow-up twist, so you cannot just echo memorized audio. You have to reconstruct the pattern under pressure. Missed phrases get flagged into your **Phrasebook** for spaced-repetition review in later levels.
+The system does **not** simply increase a numerical "difficulty level". It identifies what the learner can and cannot currently do, and constructs the next interactions around those capabilities.
 
-Each spoken turn is scored on:
+## Learning progression
 
-- **Correctness**: did the utterance achieve the task's intent?
-- **Language match**: was it actually spoken in the target language?
-- **Fluency and intelligibility**: proxied through transcription confidence and pacing
+The Guided and Recall structure is not game levels. It is part of the personalized learning engine, a progression the learner moves through as their profile improves.
+
+- **Guided exposure**: the system provides contextual support appropriate to the learner's current ability.
+- **Controlled practice**: the NPC interacts naturally while staying within the learner's current capability.
+- **Adaptive recall**: the learner meets the same underlying communication skill in a different situation, with reduced assistance.
+- **Open interaction**: the NPC becomes less predictable and the system evaluates whether the learner can independently accomplish the real-world goal.
+
+The learning objective is not "Can the player reproduce the correct sentence?" It is **"Can the player successfully communicate an intention when the situation changes?"**
+
+## What gets evaluated
+
+The system evaluates communication at multiple levels:
+
+- Intent
+- Task completion
+- Language choice
+- Listening comprehension
+- Response appropriateness
+- Fluency and intelligibility
+- Ability to recover from misunderstandings
+
+## Communication recovery
+
+Real conversations are not perfect scripted exchanges. People misunderstand each other, ask for clarification, change their request, speak differently, or introduce unexpected information. **Communication recovery** is a core learning objective: the learner must be able to recover from conversational failures.
+
+```
+NPC asks something unexpected
+  -> learner misunderstands
+  -> learner asks for clarification
+  -> NPC responds differently
+  -> learner rephrases
+  -> task continues
+```
+
+Surviving and repairing a real exchange is the skill. Repeating a memorized line is not.
+
+## The world as a learning model
+
+The environment is not the product itself. The environment provides realistic context in which communication skills are tested. One underlying communication skill can therefore appear across many contexts.
+
+For example, the skill **"asking for a price"** can show up as:
+
+- Buying food at a stall
+- Negotiating an auto fare
+- Shopping at a market
+- Buying a metro ticket
+
+Because the same skill reappears in different contexts, the learner cannot pass by memorizing individual dialogues. They must have actually acquired the transferable communication skill.
+
+## Why this is different
+
+1. **Profile-driven interactions**: every scenario is generated from the learner's communication profile.
+2. **Adaptive NPC behavior**: NPCs calibrate language, pacing, and personality per learner, not per script.
+3. **Persistent learner memory**: the profile carries mistakes, mastered situations, and confidence across sessions.
+4. **Skill-based scenario generation**: scenarios are built around weak skills, not a fixed level list.
+5. **Communication recovery**: learners are trained and assessed on repairing misunderstandings.
+6. **Transfer learning across contexts**: the same skill is retested in new situations to prevent dialogue memorization.
+7. **Guided to Recall to Adaptive to Open progression**: support is removed as capability grows.
+8. **Indian-language speech and code-switching**: handled natively through Sarvam AI.
+
+A concrete example: two players can enter the exact same location and receive completely different interactions, because their communication profiles differ.
+
+- Player A struggles with numbers: the NPC naturally creates a price or quantity interaction.
+- Player B struggles with listening: the NPC uses a different conversational challenge.
+- Player C has mastered both: the NPC introduces an unexpected follow-up and removes assistance.
+
+There is no single fixed "correct gameplay path". The learner's behavior shapes what happens next.
 
 ## Why Sarvam AI
 
-This game only works because the models behind it are trained specifically for Indian languages and accents. Off-the-shelf global speech APIs consistently fail on Indic phonetics, code-mixed speech, and regional accents, which would break the core loop: if the game cannot understand the player, it cannot teach them.
+This system only works because the models behind it are trained specifically for Indian languages and accents. Off-the-shelf global speech APIs consistently fail on Indic phonetics, code-mixed speech, and regional accents, which would break the core loop: if the system cannot understand the player, it cannot adapt to them.
 
-Sarvam AI is built for exactly this. Its speech models are trained on Indian languages, and its chat model is the first Indic-centric open-weight LLM family built specifically for Indian context and languages. That is the difference between software that hears Tamil, Hindi, and Malayalam like a local, and software that guesses.
+Sarvam AI is built for exactly this. Its speech models are trained on Indian languages, and its chat model is an Indic-centric open-weight LLM family built for Indian context and languages. That is the difference between software that hears Tamil, Hindi, and Malayalam like a local, and software that guesses.
 
 ## What models we will use
 
@@ -89,10 +161,10 @@ Sarvam AI is built for exactly this. Its speech models are trained on Indian lan
 |---|---|---|
 | **Saarika / Saaras** | Speech-to-Text | Transcribing the player's spoken response from the mic |
 | **Bulbul v3** | Text-to-Speech | Giving each NPC a natural regional-language voice |
-| **Sarvam-M/30B** | Chat Completions | Judging intent in the unscripted Round 2 |
-| **Mayura** | Translation + Transliteration | Generating script, transliteration, and translation for the dialogue card |
+| **Sarvam-M/30B** | Chat Completions | Judging intent and generating adaptive NPC behavior |
+| **Mayura** | Translation + Transliteration | Generating script, transliteration, and translation for dialogue support |
 
-The choice matters per step of the loop. Saarika/Saaras make the mic input reliable. Mayura pre-fills the regional script and transliteration content so quests are authored fast. Bulbul v3 voices the NPCs so the audio the player hears is natural. And Sarvam-M/30B is what makes the "recall" round possible, because it can judge whether a free-form, unscripted spoken answer actually fulfilled the task's intent.
+The choice matters per step of the loop. Saarika/Saaras make the mic input reliable. Mayura pre-fills regional script and transliteration so content is authored fast. Bulbul v3 voices the NPCs so the audio the player hears is natural. And Sarvam-M/30B is what makes adaptive NPCs possible: it judges whether a free-form, unscripted spoken answer fulfilled the task's intent, and it drives the unscripted follow-ups that open interaction demands.
 
 ## Tech stack
 
@@ -101,7 +173,7 @@ The choice matters per step of the loop. Saarika/Saaras make the mic input relia
 - React + TypeScript, bundled with Vite
 - Three.js + React Three Fiber for the 3D world
 - Tailwind for the HUD and dialogue UI
-- Zustand for game state (quests, XP, wallet, phrasebook)
+- Zustand for game state (profile, session progress, phrasebook)
 - Browser MediaRecorder API for mic capture
 
 **Backend** (`apps/api`)
@@ -111,7 +183,7 @@ The choice matters per step of the loop. Saarika/Saaras make the mic input relia
 **Shared** (`packages/`)
 
 - `types`: shared TypeScript contracts between frontend and backend
-- `game-content`: quest and level data as structured JSON, validated with Zod
+- `game-content`: scenario and NPC data as structured JSON, validated with Zod
 
 **Hosting**
 
