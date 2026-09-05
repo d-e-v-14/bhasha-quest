@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useKeyboardMovement } from './PlayerController';
+import { useCharacter } from './useCharacter';
 
-const SPEED = 6.5;
+const SPEED = 5.0;
 const CAM_DIST = 9;
 const CAM_HEIGHT = 4.2;
 const MOUSE_SENS = 0.0024;
@@ -12,23 +13,25 @@ const PITCH_MAX = 1.15;
 const BOUNDS = { minX: -26, maxX: 26, minZ: -54, maxZ: 54 };
 
 /**
- * Third-person placeholder player (capsule) with WASD movement, mouse-look
- * (pointer-locked, click the canvas to capture), and a lerp-smoothed
- * over-the-shoulder camera. Movement is aligned to yaw so the player can walk
- * across the street and face the Hawa Mahal.
+ * Third-person player driven by the loaded Indian-teenager character.
+ * WASD movement, pointer-locked mouse-look (click the canvas to capture), and a
+ * lerp-smoothed over-the-shoulder camera. Idle = Standing clip; moving = the
+ * Walking clip (root motion stripped, gait matched to speed).
  */
 export default function Player() {
   const { gl, camera } = useThree();
   const group = useRef<THREE.Group>(null);
   const read = useKeyboardMovement();
+  const character = useCharacter();
 
-  const yaw = useRef(-Math.PI / 2); // face west (-x) toward Hawa Mahal
+  const yaw = useRef(-Math.PI / 2); // face west (-x) toward the Hawa Mahal
   const pitch = useRef(0.22);
   const pos = useRef(new THREE.Vector3(0, 0, 14));
   const camPos = useRef(new THREE.Vector3(0, CAM_HEIGHT, 0));
   const locked = useRef(false);
+  const mode = useRef<'idle' | 'walk' | null>(null);
 
-  const dummyDir = useMemo(() => new THREE.Vector3(), []);
+  const dummyFwd = useMemo(() => new THREE.Vector3(), []);
   const dummyBehind = useMemo(() => new THREE.Vector3(), []);
 
   useEffect(() => {
@@ -62,21 +65,38 @@ export default function Player() {
     const input = read();
     const step = Math.min(dt, 0.05);
 
+    const { walkAction, idleAction, mixer } = character;
+
     // direction vectors from yaw
-    dummyDir.set(Math.sin(yaw.current), 0, Math.cos(yaw.current));
+    dummyFwd.set(Math.sin(yaw.current), 0, Math.cos(yaw.current));
     const rightX = Math.cos(yaw.current);
     const rightZ = -Math.sin(yaw.current);
 
-    const dx = dummyDir.x * input.z + rightX * input.x;
-    const dz = dummyDir.z * input.z + rightZ * input.x;
-    const len = Math.hypot(dx, dz);
+    const dx = dummyFwd.x * input.z + rightX * input.x;
+    const dz = dummyFwd.z * input.z + rightZ * input.x;
+    const speed = Math.hypot(dx, dz);
+    const moving = speed > 0.001;
 
-    if (len > 0.001) {
-      const s = (SPEED * step) / len;
+    if (moving) {
+      const s = (SPEED * step) / speed;
       pos.current.x = THREE.MathUtils.clamp(pos.current.x + dx * s, BOUNDS.minX, BOUNDS.maxX);
       pos.current.z = THREE.MathUtils.clamp(pos.current.z + dz * s, BOUNDS.minZ, BOUNDS.maxZ);
       group.current?.quaternion.setFromEuler(new THREE.Euler(0, Math.atan2(dx, dz), 0));
     }
+
+    // animation state machine: crossfade between standing (idle) and walking
+    const nextMode = moving ? 'walk' : 'idle';
+    if (mode.current !== nextMode) {
+      mode.current = nextMode;
+      if (nextMode === 'walk') {
+        walkAction.reset().fadeIn(0.2).play();
+        idleAction.fadeOut(0.2);
+      } else {
+        idleAction.reset().fadeIn(0.2).play();
+        walkAction.fadeOut(0.2);
+      }
+    }
+    mixer.update(dt);
 
     group.current?.position.copy(pos.current);
 
@@ -96,15 +116,7 @@ export default function Player() {
 
   return (
     <group ref={group} position={[0, 0, 14]}>
-      {/* placeholder low-poly humanoid (capsule + head) */}
-      <mesh castShadow position={[0, 0.8, 0]}>
-        <capsuleGeometry args={[0.3, 0.75, 4, 10]} />
-        <meshStandardMaterial color="#d9704f" roughness={0.75} />
-      </mesh>
-      <mesh castShadow position={[0, 1.55, 0]}>
-        <sphereGeometry args={[0.24, 10, 10]} />
-        <meshStandardMaterial color="#e8b98e" roughness={0.7} />
-      </mesh>
+      <primitive object={character.object} />
     </group>
   );
 }
