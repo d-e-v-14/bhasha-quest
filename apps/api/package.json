@@ -9,9 +9,12 @@
     "start": "node dist/server.js",
     "ws-test": "tsx scripts/ws-test.mts",
     "typecheck": "tsc -p tsconfig.json",
+    "eval": "tsx scripts/eval-sample.ts",
+    "test:eval": "tsx scripts/eval-test.ts",
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@langchain/langgraph": "^1.4.14",
     "@learn-live/types": "workspace:*",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

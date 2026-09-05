@@ -1,10 +1,18 @@
-import type { ScoreResult, TurnScore } from "./scoring.js";
+import type { EvaluationResult, ScoreResult, TurnScore } from "./scoring.js";
 
 export interface NormalizedSttResult {
   transcript: string;
   languageCode: string;
   durationSeconds?: number;
   source: "realtime" | "rest";
+  wordConfidences?: number[];
+  pauseCount?: number;
+}
+
+export interface SttMetadata {
+  durationMs?: number;
+  wordConfidences?: number[];
+  pauseCount?: number;
 }
 
 export type RelayEvent =
@@ -13,6 +21,7 @@ export type RelayEvent =
   | { event: "utterance.end"; utteranceIdx: number }
   | { event: "partial"; utteranceIdx: number; text: string }
   | { event: "result"; transcript: string; latencyMs: number; score: ScoreResult }
+  | { event: "evaluation"; evaluation: EvaluationResult }
   | { event: "intent_verdict"; verdict: TurnScore }
   | { event: "fatal_error"; code: string; message: string; fallbackToRest?: boolean }
   | { event: "error"; code: string; message: string };
